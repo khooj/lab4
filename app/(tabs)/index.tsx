@@ -1,66 +1,34 @@
-import { View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, RefreshControl, Button } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import ListItem from '@/components/ListItem';
-import type { ListItemProps } from '@/components/ListItem';
 import { ProductsContext } from '@/store/store';
 import { observer } from 'mobx-react';
 
-type ListItemPropsKey = ListItemProps & {
-  key: string,
-};
-
-const data: ListItemPropsKey[] = [
-  {
-    key: '0',
-    langName: 'Rust',
-    desc: 'Начал изучать в 2019 году как язык для пет-проектов. Очень понравился проработанной семантикой.',
-    imageUrl: 'https://files.mastodon.social/accounts/avatars/109/356/701/975/573/606/original/fc413d3a921a2d09.jpeg'
-  },
-  {
-    key: '1',
-    langName: 'Elixir',
-    desc: 'Изучаю для освоения других парадигм программирования (функциональной) и принципов построения приложений на основе акторной модели.',
-    imageUrl: 'https://vectorseek.com/wp-content/uploads/2023/10/Elixir-Logo-Vector.svg-.png'
-  },
-  {
-    key: '2',
-    langName: 'Golang',
-    desc: 'Основной язык для профессиональной деятельности. Хорош своей простотой, этим же и плох.',
-    imageUrl: 'https://cdn.vectorstock.com/i/1000v/77/94/golang-emblem-blue-gopher-vector-27827794.jpg'
-  },
-];
-
-export default observer(function HomeScreen() {
+export default observer(function ProductsList() {
   const [refreshing, setRefreshing] = useState(true);
-  const [userData, setUserData] = useState([]);
   const productsStore = useContext(ProductsContext);
 
-  useEffect(() => {
-    loadUserData();
-    console.log(productsStore.prop1);
-  }, []);
-
-  const loadUserData = () => {
+  const loadProducts = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setUserData(data);
-      setRefreshing(false);
-    }, 2000);
+    productsStore.fetchProducts()
+      .then(_ => setRefreshing(false))
+      .catch(_ => setRefreshing(false));
   };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={productsStore.products}
         renderItem={item => (
-          <ListItem
-            langName={item.item.langName}
-            desc={item.item.desc}
-            imageUrl={item.item.imageUrl}
-          />
+          <ListItem {...item.item} />
         )}
+        keyExtractor={el => el.id.toString()}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={loadUserData} />
+          <RefreshControl refreshing={refreshing} onRefresh={loadProducts} />
         }
       />
     </View>
