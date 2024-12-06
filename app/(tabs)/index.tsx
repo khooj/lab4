@@ -1,7 +1,9 @@
 import { View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ListItem from '@/components/ListItem';
 import type { ListItemProps } from '@/components/ListItem';
+import { ProductsContext } from '@/store/store';
+import { observer } from 'mobx-react';
 
 type ListItemPropsKey = ListItemProps & {
   key: string,
@@ -28,12 +30,14 @@ const data: ListItemPropsKey[] = [
   },
 ];
 
-export default function HomeScreen() {
+export default observer(function HomeScreen() {
   const [refreshing, setRefreshing] = useState(true);
   const [userData, setUserData] = useState([]);
+  const productsStore = useContext(ProductsContext);
 
   useEffect(() => {
     loadUserData();
+    console.log(productsStore.prop1);
   }, []);
 
   const loadUserData = () => {
@@ -61,7 +65,7 @@ export default function HomeScreen() {
       />
     </View>
   );
-}
+})
 
 const styles = StyleSheet.create({
   container: {

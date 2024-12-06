@@ -29,15 +29,17 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-sqlite",
-      {
-        "enableFTS": true,
-        "useSQLCipher": true,
-        "android": {
-          "enableFTS": false,
-          "useSQLCipher": false
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": true,
+          "android": {
+            "enableFTS": false,
+            "useSQLCipher": false
+          }
         }
-      }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
