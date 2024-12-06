@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Image, Button } from 'react-native';
 import { ProductsContext, type ProductData } from '@/store/store';
 import { useContext } from 'react';
+import { observer } from 'mobx-react';
 
 const text = StyleSheet.create({
   text: {
@@ -23,15 +24,13 @@ const stylesInner = StyleSheet.create({
   },
 })
 
-const ListItem = (props: ProductData) => {
+const ListItem = observer((props: ProductData) => {
   const {
     id,
     description,
-    rating,
     title,
     image,
     price,
-    category
   } = props;
 
   const productsStore = useContext(ProductsContext);
@@ -46,13 +45,12 @@ const ListItem = (props: ProductData) => {
         <View style={stylesInner.container}>
           <Image source={{ uri: image }} style={{ width: 50, height: 50 }} />
           <Text style={stylesInner.text}>{title}</Text>
-          <Text style={{ fontSize: 14 }}>{`${rating.rate} (${rating.count})`}</Text>
         </View>
         <Text style={text.text}>{description}</Text>
       </View>
-      <Button title={`Checkout ${price}$`} onPress={() => onPress(id)} />
+      <Button title={`Добавить в корзину за ${price}$`} onPress={() => onPress(id)} />
     </View>
   )
-};
+});
 
 export default ListItem;
